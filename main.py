@@ -1,73 +1,68 @@
-from fastapi import FastAPI, Response, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from typing import List, Union
 import uvicorn
-import requests
-import json
-import httpx
-import asyncio
+from starlette.responses import JSONResponse
 
 from CafeService import CafeService
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+#app.mount("/static", StaticFiles(directory="static"), name="static")
+service = CafeService()
 
 
 @app.get("/")
 def hello_world():
-    return 'Hello, this is the composition for Tapioca Cafe'
+    return 'Hello, this is Tapioca Cafe'
 
 
-@app.get("/sync")
-async def get_services():
-    cafemanagement = {}
-    ordermangement = {}
-    customerservice = {}
+@app.get("/product_async")
+async def async_call():
+    IDList = ["1"]
+    result = await service.getProductAsync(IDList)
+    return JSONResponse(content={"products": result})
 
-    ## Get cafe management
-    url_cafe = f""
-    response_cafe = requests.get(url_cafe)
-    if response_cafe.status_code == 200:
-        cafemanagement = json.loads(response_cafe.content.decode('utf-8'))
+@app.get("/product_sync")
+async def async_call():
+    IDList = ["1"]
+    result = await service.getProductSync(IDList)
+    return JSONResponse(content={"products": result})
 
-    ## Get order management
-    url_order = f""
-    response_order = requests.get(url_order)
-    if response_order.status_code == 200:
-        ordermangement = json.loads(response_order.content.decode('utf-8'))
+@app.get("/customer_async")
+async def async_call():
+    IDList = ["1"]
+    result = await service.getCustomerAsync(IDList)
+    return JSONResponse(content={"customers": result})
 
-    ## Get customer service
-    url_customer = f""
-    response_customer = requests.get(url_customer)
-    if response_customer.status_code == 200:
-        customerservice = json.loads(response_customer.content.decode('utf-8'))
+@app.get("/customer_sync")
+async def async_call():
+    IDList = ["1","2"]
+    result = await service.getCustomerSync(IDList)
+    return JSONResponse(content={"customers": result})
 
-    cafe = CafeService("Tapioca", cafemanagement, ordermangement, customerservice)
-    cafe.display()
+@app.get("/staff_async")
+async def async_call():
+    IDList = ["1"]
+    result = await service.getStaffAsync(IDList)
+    return JSONResponse(content={"staffs": result})
 
+@app.get("/order_sync")
+async def async_call():
+    IDList = ["1","2"]
+    result = await service.getOrderAsync(IDList)
+    return JSONResponse(content={"orders": result})
 
-@app.get("/async")
-async def async_get_services():
-    url_cafemangement = f""
-    url_ordermangement = f""
-    url_customerservice = f""
+@app.get("/order_sync")
+async def async_call():
+    IDList = ["1","2"]
+    result = await service.getOrderSync(IDList)
+    return JSONResponse(content={"orders": result})
 
-    async with httpx.AsyncClient() as client:
-        response_cafe = client.get(url_cafemangement)
-        response_order = client.get(url_ordermangement)
-        response_customer = client.get(url_customerservice)
-
-        # Use asyncio.gather to wait for all responses
-        responses = await asyncio.gather(response_cafe, response_order, response_customer)
-
-    cafemanagement = responses[0].json()
-    ordermangement = responses[1].json()
-    customerservice = responses[2].json()
-
-    cafe = CafeService("Tapioca", cafemanagement, ordermangement, customerservice)
-    cafe.display()
+@app.get("/meeting_sync")
+async def async_call():
+    IDList = ["1","2"]
+    result = await service.getOrderSync(IDList)
+    return JSONResponse(content={"meetings": result})
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5001)
+    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
