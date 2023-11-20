@@ -19,13 +19,13 @@ def hello_world():
 async def async_call():
     IDList = ["1"]
     result = await service.getProductAsync(IDList)
-    return JSONResponse(content={"products": result})
+    return JSONResponse(content={"message": "This is from async get.","products": result})
 
 @app.get("/product_sync")
 async def async_call():
     IDList = ["1"]
     result = await service.getProductSync(IDList)
-    return JSONResponse(content={"products": result})
+    return JSONResponse(content={"message": "This is from sync get.","products": result})
 
 @app.get("/customer_async")
 async def async_call():
@@ -45,7 +45,13 @@ async def async_call():
     result = await service.getStaffAsync(IDList)
     return JSONResponse(content={"staffs": result})
 
-@app.get("/order_sync")
+@app.get("/staff_sync")
+async def async_call():
+    IDList = ["1","2"]
+    result = await service.getStaffSync(IDList)
+    return JSONResponse(content={"staffs": result})
+
+@app.get("/order_async")
 async def async_call():
     IDList = ["1","2"]
     result = await service.getOrderAsync(IDList)

@@ -91,7 +91,7 @@ class CafeService:
         return result
 
     async def getOrderAsync(self, IDlist):
-        urlpre = "http://ec2-13-58-188-11.us-east-2.compute.amazonaws.com:5001/cafe/products?ProductID"
+        urlpre = "http://18.119.213.218:8011/orders/"
         urls = {}
         for ID in IDlist:
             urls[ID] = urlpre + ID
@@ -107,7 +107,7 @@ class CafeService:
             return result
 
     async def getOrderSync(self, IDlist):
-        url = "http://ec2-13-58-188-11.us-east-2.compute.amazonaws.com:5001/cafe/products?ProductID"
+        url = "http://18.119.213.218:8011/orders/"
         result = {}
         for ID in IDlist:
             response = requests.get(url + ID)
