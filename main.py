@@ -1,11 +1,22 @@
+import json
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from starlette.responses import JSONResponse
-
+from fastapi.responses import JSONResponse
 from CafeService import CafeService
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+# Add CORS middleware to allow requests from localhost:3000
+app.add_middleware(
+    #need to update here for final using
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["GET","POST"],
+    allow_headers=["*"],
+)
 #app.mount("/static", StaticFiles(directory="static"), name="static")
 service = CafeService()
 
@@ -23,9 +34,9 @@ async def async_call():
 
 @app.get("/product_sync")
 async def async_call():
-    IDList = ["1","2"]
-    result = await service.getProductSync(IDList)
-    return JSONResponse(content={"message": "This is from sync get.","products": result})
+    #IDList = ["1","2"]
+    result = await service.getProductSync()
+    return JSONResponse(content={"products":result})
 
 @app.get("/customer_async")
 async def async_call():
@@ -60,9 +71,9 @@ async def async_call():
 
 @app.get("/order_sync")
 async def async_call():
-    IDList = ["1","2","3","4","5"]
-    result = await service.getOrderSync(IDList)
-    return JSONResponse(content={"message": "This is from sync get.","orders": result})
+    #IDList = ["1","2","3","4","5"]
+    result = await service.getOrderSync()
+    return JSONResponse(content={"orders":result})
 
 @app.get("/meeting_sync")
 async def async_call():

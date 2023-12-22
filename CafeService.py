@@ -13,6 +13,7 @@ class CafeService:
                 "name": name,
                 "data": t
             }
+        print(result)
         return result
 
     async def getProductAsync(self, IDlist):
@@ -31,13 +32,22 @@ class CafeService:
 
             return result
 
-    async def getProductSync(self, IDlist):
+    async def getProductSync(self):
         url = "http://ec2-13-58-188-11.us-east-2.compute.amazonaws.com:5001/cafe/products?ProductID="
-        result = {}
-        for ID in IDlist:
-            response = requests.get(url + ID)
-            result[ID] = response.json()
-
+        result = []
+        ID = 1
+        while True:
+            try:
+                response = requests.get(url + str(ID))
+                if not response.json():
+                    break
+                temp = response.json()
+                temp["id"] = ID
+                result.append(temp)
+                ID = ID + 1
+            except Exception as e:
+                print(e)
+                break
         return result
 
     async def getStaffAsync(self, IDlist):
@@ -106,13 +116,20 @@ class CafeService:
 
             return result
 
-    async def getOrderSync(self, IDlist):
+    async def getOrderSync(self):
         url = "http://18.119.213.218:8011/orders/"
-        result = {}
-        for ID in IDlist:
-            response = requests.get(url + ID)
-            result[ID] = response.json()
-
+        result = []
+        ID = 1
+        while True:
+            try:
+                response = requests.get(url + str(ID))
+                if not response.json():
+                    break
+                result.append(response.json())
+                ID = ID + 1
+            except Exception as e:
+                print(e)
+                break
         return result
 
     async def getMeetingSync(self, IDlist):
